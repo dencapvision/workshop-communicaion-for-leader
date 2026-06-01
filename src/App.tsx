@@ -191,7 +191,45 @@ export default function App() {
 - **STOP (จะตัดใจงดเว้น):**\n${stopCardsText}
 - **CONTINUE (จะสืบสานต่อ):**\n${continueCardsText}`;
 
-    const documentText = `# เวิร์กชอปคู่มือตกผลึก: ทักษะการ�  return (
+    const documentText = `# เวิร์กชอปคู่มือตกผลึก: ทักษะการสื่อสารและการนำเสนอสำหรับผู้นำ\n\n${introText}\n\n${pitchText}\n\n${reflectionText}\n\n---\n*จัดทำโดยผู้เรียนหลักสูตรร่วมใจพัฒนาศักยภาพผู้บริหารสาธารณสุขล้านนา*`;
+    
+    try {
+      const blob = new Blob([documentText], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Workbook_MasterFA_${Date.now()}.md`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setShowSaveSuccess(true);
+      setTimeout(() => setShowSaveSuccess(false), 3000);
+      playChimeSound('success');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCopyLink = () => {
+    try {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 3000);
+      playChimeSound('success');
+    } catch (e) {
+      console.warn("Copy link failed", e);
+    }
+  };
+
+  // Group slides by section
+  const groupedSlides = SLIDES_DATA.reduce((acc, s) => {
+    const sec = s.section || 'อื่นๆ';
+    if (!acc[sec]) acc[sec] = [];
+    acc[sec].push(s);
+    return acc;
+  }, {} as Record<string, typeof SLIDES_DATA>);
+
+  return (
     <div className="min-h-screen bg-warm-white text-ink font-sans flex flex-col p-4 md:p-6 lg:p-8 gap-5 lg:gap-6 selection:bg-sand/30 selection:text-ink">
       
       {/* Top Professional Header Bar */}
@@ -403,16 +441,24 @@ export default function App() {
             {/* Slide Header details */}
             {activeSlide.layout !== 'divider' && (
               <div className="flex items-center justify-between pb-3 text-xs text-[#8c6239] border-b border-sand/10 mb-4 shrink-0 font-sans">
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold uppercase bg-sand/10 text-primary-green px-2 py-0.5 rounded tracking-widest text-[9px] border border-sand/15">
-                    SLIDE {activeSlide.id}
-                  </span>
-                  <span className="opacity-40">|</span>
-                  <span className="font-semibold text-primary-green">{activeSlide.section}</span>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src="https://res.cloudinary.com/dmo4kq7ej/image/upload/v1780335603/ChatGPT_Image_1_%E0%B8%A1%E0%B8%B4.%E0%B8%A2._2569_15_12_58_cvzm9y.png"
+                    alt="สถาบันแคปวิชั่น"
+                    className="h-8 md:h-10 w-auto object-contain shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span className="opacity-30 self-stretch border-r border-[#8c6239]/20" />
+                  <div className="flex flex-col">
+                    <span className="font-extrabold uppercase bg-sand/10 text-primary-green px-1.5 py-0.5 rounded tracking-widest text-[8.5px] border border-sand/15 w-max leading-none">
+                      SLIDE {activeSlide.id} / 26
+                    </span>
+                    <span className="text-[10px] font-semibold text-primary-green mt-0.5">{activeSlide.section}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 font-semibold text-stone-500">
-                  <span className="font-medium text-primary-green font-sans">ครูเด่นมาสเตอร์ฟา</span>
-                  <span className="opacity-40">•</span>
+                <div className="flex items-center gap-2.5 font-semibold text-stone-500">
+                  <span className="font-medium text-primary-green font-sans text-right hidden sm:block">ครูเด่นมาสเตอร์ฟา</span>
+                  <span className="opacity-40 hidden sm:inline">•</span>
                   <span>capvisionpartner.com</span>
                 </div>
               </div>
@@ -593,69 +639,6 @@ export default function App() {
         <div className="flex gap-4">
           <a href="https://capvisionpartner.com/speakers/den-masterfa" target="_blank" rel="noreferrer" className="text-sand hover:text-white hover:underline font-semibold flex items-center gap-1 font-sans">
             <span>ครูเด่น มาสเตอร์ฟา — Master Facilitator</span>
-          </a>
-        </div>
-      </footer>
-    </div>
-  ); <div className="flex-1 overflow-y-auto p-4 space-y-5 font-sans">
-            <div>
-              <span className="bg-[#e07a5f]/15 text-[#e07a5f] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider block w-max">
-                🎯 คู่มือนำคุยประจำสไลเดอร์ที่ {activeSlide.id}
-              </span>
-              <h4 className="text-sm font-display font-semibold mt-1 text-stone-800 leading-snug">
-                {activeSlide.presenterNotes.title}
-              </h4>
-            </div>
-
-            <div className="space-y-3 pt-3 border-t border-stone-200/60">
-              <span className="text-[10px] text-gray-400 uppercase font-bold block mb-1">
-                🗣️ สคริปต์พูด & แนวการฟัดแบ็กผู้เรียน:
-              </span>
-              {activeSlide.presenterNotes.points.map((pt, idx) => (
-                <div key={idx} className="bg-white border border-black/5 p-3 rounded-2xl shadow-2xs text-xs text-stone-700 leading-relaxed flex gap-2">
-                  <span className="text-[#1b6b50] font-bold shrink-0">{idx + 1}.</span>
-                  <p className="font-semibold">{pt}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-4 border-t border-stone-200/60 space-y-2">
-              <span className="text-[10px] text-[#1b6b50] uppercase font-bold block">
-                ⚙️ ประดับระบบ Zoom ตระเตรียม:
-              </span>
-              <div className="p-3 bg-stone-100/60 rounded-xl text-stone-500 text-[11px] leading-relaxed border border-black/5">
-                • <strong>มุมกล้อง:</strong> เสมอแนวสายตา สบตาตรง แผ่หน้าสว่างตัดเงาด้านข้าง<br/>
-                • <strong>น้ำเสียง:</strong> ปล่อยลมปราณลึกกังวาน ไม่ชิงพูดเร็วกลบลมเงียบ<br/>
-                • <strong>แผงสไลด์:</strong> สลับแบบอักษรมินิมอลเพื่อดลสะกดสมาธิผู้บริหารล้านนา
-              </div>
-            </div>
-
-            {/* Contact widget card */}
-            <div className="bg-gradient-to-br from-[#1b6b50]/5 to-[#f2cc8f]/10 p-4 rounded-2xl border border-black/5 text-center space-y-2 mt-4 shadow-2xs">
-              <span className="text-[9px] bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                CAPVISION SPEAKER NETWORK
-              </span>
-              <p className="text-[11px] text-stone-600 font-semibold leading-relaxed">
-                ครูเด่น มาสเตอร์ฟา — วิทยากรระดับผู้นำสาธารณสุข
-              </p>
-              <div className="flex items-center justify-center gap-1 text-[11px] text-[#1b6b50] hover:underline">
-                <ExternalLink className="w-3 h-3" />
-                <a href="https://capvisionpartner.com" target="_blank" rel="noreferrer" className="font-semibold">capvisionpartner.com</a>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-      </div>
-
-      {/* Floating Compact Indicator for Mobile with helpful shortcuts */}
-      <footer id="global-action-footer" className="bg-[#1c2722] text-xs text-gray-400 py-3.5 px-6 text-center rounded-2xl md:rounded-3xl border border-black/5 font-sans flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-        <p>
-          © 2026 สถาบันแคปวิชั่น — ระบบนำเสนอสไลด์ปฏิสัมพันธ์ทักษะผู้บริหารเพื่ออนามัยยั่งยืน
-        </p>
-        <div className="flex gap-4">
-          <a href="https://capvisionpartner.com/speakers/den-masterfa" target="_blank" rel="noreferrer" className="text-[#f2cc8f] hover:text-white hover:underline font-semibold flex items-center gap-1 font-sans">
-            <span>ครูเด่น มาสเตอร์ฟา</span>
           </a>
         </div>
       </footer>

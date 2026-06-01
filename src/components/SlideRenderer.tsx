@@ -215,42 +215,54 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
     switch (slide.layout) {
       case 'cover':
         return (
-          <div id="slide-layout-cover" className="flex flex-col items-center justify-center text-center h-full max-w-4xl mx-auto px-4 py-8 relative">
+          <div id="slide-layout-cover" className="flex flex-col items-center justify-center text-center h-full max-w-4xl mx-auto px-4 py-6 relative">
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2 flex items-center gap-1.5 bg-[#1b6b50]/10 text-[#1b6b50] rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-[#e07a5f]" />
               <span>THE PROFESSIONAL AUTHORITY PRESENTATION</span>
             </div>
 
-            <div className="w-18 h-1 bg-gradient-to-r from-[#1b6b50] via-[#f2cc8f] to-[#e07a5f] rounded-full mb-8"></div>
+            {/* Premium Course Cover Image for Slide 1 */}
+            {slide.id === 1 && (
+              <div className="w-full max-w-xl my-4 overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] border-2 border-stone-100 hover:shadow-2xl">
+                <img 
+                  src="https://res.cloudinary.com/dmo4kq7ej/image/upload/v1780335689/ChatGPT_Image_1_%E0%B8%A1%E0%B8%B4.%E0%B8%A2._2569_14_52_56_gdsxep.png"
+                  alt="หลักสูตร ทักษะการสื่อสารและการนำเสนอสำหรับผู้นำ"
+                  className="w-full h-auto object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
+
+            <div className="w-18 h-1 bg-gradient-to-r from-[#1b6b50] via-[#f2cc8f] to-[#e07a5f] rounded-full mb-4 mt-2"></div>
             
-            <h1 id="cover-main-title" className="text-3xl md:text-[44px] lg:text-[48px] font-display font-bold leading-tight text-[#1b6b50] tracking-tight text-balance">
+            <h1 id="cover-main-title" className={`font-display font-bold leading-tight text-[#1b6b50] tracking-tight text-balance ${slide.id === 1 ? 'text-2xl md:text-3xl' : 'text-3xl md:text-[44px] lg:text-[48px]'}`}>
               {slide.title}
             </h1>
             
             {slide.subtitle && (
-              <p id="cover-sub-title" className="text-sm md:text-md text-gray-500 font-sans mt-5 max-w-2xl border-t border-gray-100 pt-4 leading-relaxed">
+              <p id="cover-sub-title" className="text-xs md:text-sm text-gray-500 font-sans mt-3 max-w-2xl border-t border-gray-100 pt-3 leading-relaxed">
                 {slide.subtitle}
               </p>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full mt-12 bg-white/50 backdrop-blur-xs border border-gray-100 rounded-2xl p-5 shadow-xs font-sans">
-              <div className="flex flex-col items-center p-3 text-center">
-                <span className="text-[#333] text-sm font-semibold">💼 ครูเด่น มาสเตอร์ฟา</span>
-                <span className="text-[11px] text-gray-400 mt-0.5">อนุสรณ์ หนองนา (ผู้อำนวยการสถาบัน)</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full mt-6 bg-white/50 backdrop-blur-xs border border-gray-100 rounded-2xl p-4 shadow-xs font-sans">
+              <div className="flex flex-col items-center p-2 text-center">
+                <span className="text-[#333] text-xs font-semibold">💼 ครูเด่น มาสเตอร์ฟา</span>
+                <span className="text-[10px] text-gray-400 mt-0.5">อนุสรณ์ หนองนา (ผู้อำนวยการสถาบัน)</span>
               </div>
-              <div className="flex flex-col items-center p-3 text-center border-t md:border-t-0 md:border-x border-gray-100">
-                <span className="text-[#333] text-sm font-semibold">📍 ผู้บริหารสาธารณสุขล้านนา</span>
-                <span className="text-[11px] text-gray-400 mt-0.5">เขตสุขภาพภาคเหนือตอนล่างและยง</span>
+              <div className="flex flex-col items-center p-2 text-center border-t md:border-t-0 md:border-x border-gray-100">
+                <span className="text-[#333] text-xs font-semibold">📍 ผู้บริหารสาธารณสุขล้านนา</span>
+                <span className="text-[10px] text-gray-400 mt-0.5">เขตสุขภาพภาคเหนือ</span>
               </div>
-              <div className="flex flex-col items-center p-3 text-center border-t md:border-t-0">
-                <span className="text-[#333] text-sm font-semibold">⏱️ มินิมอลอบอุ่น (6 ชม.)</span>
-                <span className="text-[11px] text-gray-400 mt-0.5">ผ่าน Zoom Virtual Workshop</span>
+              <div className="flex flex-col items-center p-2 text-center border-t md:border-t-0">
+                <span className="text-[#333] text-xs font-semibold">⏱️ มินิมอลอบอุ่น (6 ชม.)</span>
+                <span className="text-[10px] text-gray-400 mt-0.5">ผ่าน Zoom Virtual Workshop</span>
               </div>
             </div>
 
             {slide.id === 26 && (
-              <div className="mt-8 flex flex-col md:flex-row items-center gap-4 bg-lime-50/50 p-4 rounded-xl border border-lime-100/30">
-                <div className="p-2.5 bg-[#1b6b50]/5 rounded-lg border border-primary-green/10 flex flex-col items-center">
+              <div className="mt-6 flex flex-col md:flex-row items-center gap-4 bg-lime-50/50 p-4 rounded-xl border border-lime-100/30">
+                <div className="p-2.5 bg-[#1b6b50]/5 rounded-lg border border-[#1b6b50]/10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-stone-300 rounded flex items-center justify-center font-mono text-[9px] text-gray-500 text-center">
                     QR CODE<br/>@denmasterfa
                   </div>
