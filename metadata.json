@@ -1,0 +1,6 @@
+{
+  "name": "สไลด์ทักษะการสื่อสารและการนำเสนอสำหรับผู้นำ",
+  "description": "ระบบนำเสนอสไลด์ปฏิสัมพันธ์ (Interactive Slideshow) สำหรับหลักสูตรพัฒนาทักษะการสื่อสารและการนำเสนอสัมมนา โดย ครูเด่น มาสเตอร์ฟา",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

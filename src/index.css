@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans Thai", "Sarabun", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Prompt", "Sarabun", sans-serif;
+  --font-serif: "Cinzel", "Sarabun", serif;
+  
+  --color-primary-green: #0d2c1d; /* Deep Forest Green */
+  --color-secondary-terracotta: #ab5c37; /* Luxury Copper / Warm Earth Accent */
+  --color-sand: #c5a059; /* Matte Gold / Imperial Soft Bronze */
+  --color-ink: #111512; /* Charcoal Black / Forest Ink */
+  --color-warm-white: #f5f0e6; /* Warm Beige / Soft Cream */
+  --color-navy: #0b1329; /* Midnight Blue */
+}
+
+/* Custom background defaults and scrollbars */
+body {
+  background-color: var(--color-warm-white);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  background-image: radial-gradient(circle at 10% 20%, rgba(197, 160, 89, 0.03) 0%, transparent 60%);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Slide active shadows & luxury editorial touches */
+.slide-active-shadow {
+  box-shadow: 0 30px 60px -15px rgba(13, 44, 29, 0.12), 0 0 2px 1px rgba(197, 160, 89, 0.15);
+}
+
+.luxury-border {
+  border: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #c5a059 0%, #ab5c37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
