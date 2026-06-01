@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type SlideLayoutType = 'cover' | 'schedule' | 'standard' | 'divider' | 'activity' | 'closing' | 'grid';
+export type SlideLayoutType = 'cover' | 'schedule' | 'standard' | 'divider' | 'activity' | 'closing' | 'grid' | 'coaching_card' | 'presentation_prep' | 'coaching_principles';
 
 export interface PresenterNote {
   title: string;
@@ -25,6 +25,7 @@ export interface SlideData {
   illustrationKey?: string;
   hugeText?: string;
   terracottaStripe?: boolean;
+  imageUrl?: string;
 }
 
 export interface SelfIntroState {
@@ -46,4 +47,19 @@ export interface ReflectionCard {
   id: string;
   text: string;
   category: 'start' | 'stop' | 'continue';
+}
+
+export interface PresentationPrepState {
+  title: string;
+  audience: string;
+  objective: string;
+  hook: string;
+  body1: string;
+  body2: string;
+  body3: string;
+  cta: string;
+  checkedConfidence: boolean;
+  checkedPosture: boolean;
+  checkedEyeContact: boolean;
+  checkedBreathing: boolean;
 }

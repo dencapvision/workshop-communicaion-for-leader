@@ -13,7 +13,8 @@ import {
 import { SLIDES_DATA } from './data/slides';
 import { SlideRenderer } from './components/SlideRenderer';
 import { playChimeSound } from './components/WorkbookWidgets';
-import { SelfIntroState, ProjectProposalState, ReflectionCard } from './types';
+import { SelfIntroState, ProjectProposalState, ReflectionCard, PresentationPrepState } from './types';
+import { InteractiveWorkbookView } from './components/InteractiveWorkbookView';
 
 export default function App() {
   // Current Slide Navigation State
@@ -21,6 +22,7 @@ export default function App() {
   const activeSlide = SLIDES_DATA[currentSlideIdx];
 
   // Core UI Toggles
+  const [viewMode, setViewMode] = useState<'slides' | 'workbook'>('slides');
   const [showOutline, setShowOutline] = useState<boolean>(true);
   const [showPresenterNotes, setShowPresenterNotes] = useState<boolean>(true);
   const [textSize, setTextSize] = useState<'s' | 'm' | 'l'>('m');
@@ -34,6 +36,20 @@ export default function App() {
   // Shared Workbook states
   const [selfIntro, setSelfIntro] = useState<SelfIntroState>({ hook: '', mission: '', value: '', goal: '' });
   const [projectProposal, setProjectProposal] = useState<ProjectProposalState>({ title: '', challenge: '', solution: '', outcome: '', cta: '' });
+  const [presentationPrep, setPresentationPrep] = useState<PresentationPrepState>({
+    title: '',
+    audience: '',
+    objective: 'persuade',
+    hook: '',
+    body1: '',
+    body2: '',
+    body3: '',
+    cta: '',
+    checkedConfidence: false,
+    checkedPosture: false,
+    checkedEyeContact: false,
+    checkedBreathing: false
+  });
   const [reflectionCards, setReflectionCards] = useState<ReflectionCard[]>([
     { id: 'ref-1', text: "ซ้อมพูดในใจและ Box Breathing ก่อนเริ่มประชุม Zoom มิติต่างๆ", category: "start" },
     { id: 'ref-2', text: "ลดการก้มหน้าอ่านตัวหนังสือแห้อัดแน่นบนแผ่นสไลด์อย่างประหม่า", category: "stop" },
@@ -45,9 +61,11 @@ export default function App() {
     try {
       const savedIntro = localStorage.getItem('masterfa_self_intro');
       const savedPitch = localStorage.getItem('masterfa_project_pitch');
+      const savedPrep = localStorage.getItem('masterfa_presentation_prep');
       const savedCards = localStorage.getItem('masterfa_reflection_cards');
       if (savedIntro) setSelfIntro(JSON.parse(savedIntro));
       if (savedPitch) setProjectProposal(JSON.parse(savedPitch));
+      if (savedPrep) setPresentationPrep(JSON.parse(savedPrep));
       if (savedCards) setReflectionCards(JSON.parse(savedCards));
     } catch (e) {
       console.warn("Storage sync failed", e);
@@ -66,6 +84,12 @@ export default function App() {
       localStorage.setItem('masterfa_project_pitch', JSON.stringify(projectProposal));
     } catch (e) {}
   }, [projectProposal]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('masterfa_presentation_prep', JSON.stringify(presentationPrep));
+    } catch (e) {}
+  }, [presentationPrep]);
 
   useEffect(() => {
     try {
@@ -251,6 +275,30 @@ export default function App() {
           </div>
         </div>
 
+        {/* View Mode Switching Controls */}
+        <div id="viewmode-switcher" className="flex bg-[#124b37] p-1 rounded-xl border border-sand/15 shrink-0 relative z-10 font-sans">
+          <button
+            type="button"
+            id="btn-view-slides"
+            onClick={() => { setViewMode('slides'); playChimeSound('pop'); }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+              viewMode === 'slides' ? 'bg-sand text-primary-green shadow-xs' : 'text-warm-white/90 hover:bg-[#15533e]'
+            }`}
+          >
+            📽️ โหมดสไลด์นำเสนอ
+          </button>
+          <button
+            type="button"
+            id="btn-view-workbook"
+            onClick={() => { setViewMode('workbook'); playChimeSound('pop'); }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+              viewMode === 'workbook' ? 'bg-sand text-primary-green shadow-xs' : 'text-warm-white/90 hover:bg-[#15533e]'
+            }`}
+          >
+            📝 คู่มือเวิร์กชีทตกผลึก
+          </button>
+        </div>
+
         <div className="flex items-center gap-2 relative z-10">
           {/* Action to download Compiled Workbook */}
           <button
@@ -305,7 +353,24 @@ export default function App() {
       {/* Main Workspace Frame */}
       <div className="flex-1 flex flex-col lg:flex-row gap-5 lg:gap-6 relative min-h-0">
         
-        {/* Left Collapsible Outline Map */}
+        {viewMode === 'workbook' ? (
+          <div className="flex-1 overflow-y-auto w-full">
+            <InteractiveWorkbookView
+              selfIntro={selfIntro}
+              setSelfIntro={setSelfIntro}
+              projectProposal={projectProposal}
+              setProjectProposal={setProjectProposal}
+              presentationPrep={presentationPrep}
+              setPresentationPrep={setPresentationPrep}
+              reflectionCards={reflectionCards}
+              onAddReflectionCard={handleAddReflectionCard}
+              onDeleteReflectionCard={handleDeleteReflectionCard}
+              handleExportWorkbook={handleExportWorkbook}
+            />
+          </div>
+        ) : (
+          <>
+            {/* Left Collapsible Outline Map */}
         <aside 
           id="slides-map-sidebar" 
           className={`bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl border border-sand/15 w-full lg:w-72 shrink-0 shadow-md transition-all ${showOutline ? 'flex' : 'hidden'} flex-col h-full overflow-hidden`}
@@ -451,7 +516,7 @@ export default function App() {
                   <span className="opacity-30 self-stretch border-r border-[#8c6239]/20" />
                   <div className="flex flex-col">
                     <span className="font-extrabold uppercase bg-sand/10 text-primary-green px-1.5 py-0.5 rounded tracking-widest text-[8.5px] border border-sand/15 w-max leading-none">
-                      SLIDE {activeSlide.id} / 26
+                      SLIDE {currentSlideIdx + 1} / {SLIDES_DATA.length}
                     </span>
                     <span className="text-[10px] font-semibold text-primary-green mt-0.5">{activeSlide.section}</span>
                   </div>
@@ -472,6 +537,8 @@ export default function App() {
                 setSelfIntroState={setSelfIntro}
                 projectProposalState={projectProposal}
                 setProjectProposalState={setProjectProposal}
+                presentationPrepState={presentationPrep}
+                setPresentationPrepState={setPresentationPrep}
                 reflectionCards={reflectionCards}
                 onAddReflectionCard={handleAddReflectionCard}
                 onDeleteReflectionCard={handleDeleteReflectionCard}
@@ -504,7 +571,7 @@ export default function App() {
               </button>
               
               <span className="text-xs text-primary-green font-extrabold mx-2">
-                แผ่นที่ {currentSlideIdx + 1} / 26
+                แผ่นที่ {currentSlideIdx + 1} / {SLIDES_DATA.length}
               </span>
               
               <button
@@ -628,6 +695,8 @@ export default function App() {
             </div>
           </div>
         </aside>
+          </>
+        )}
 
       </div>
 
