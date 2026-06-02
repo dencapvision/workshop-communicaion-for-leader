@@ -398,7 +398,7 @@ export default function App() {
                 <div className="space-y-1">
                   {list.map((slideItem) => {
                     const isSelected = activeSlide.id === slideItem.id;
-                    const index = slideItem.id - 1;
+                    const index = SLIDES_DATA.findIndex(s => s.id === slideItem.id);
                     return (
                       <button
                         key={slideItem.id}

@@ -232,8 +232,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               <span>THE PROFESSIONAL AUTHORITY PRESENTATION</span>
             </div>
 
-            {/* Premium Course Cover Image for Slide 1 */}
-            {slide.id === 1 && (
+            {/* Premium Course Cover Image for Slide 1 or Slide 301 */}
+            {(slide.id === 1 || slide.id === 301) && (
               <div className="w-full max-w-xl my-4 overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] border-2 border-stone-100 hover:shadow-2xl">
                 <img 
                   src="https://res.cloudinary.com/dmo4kq7ej/image/upload/v1780335689/ChatGPT_Image_1_%E0%B8%A1%E0%B8%B4.%E0%B8%A2._2569_14_52_56_gdsxep.png"
@@ -271,7 +271,7 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               </div>
             </div>
 
-            {slide.id === 26 && (
+            {(slide.id === 26 || slide.id === 330) && (
               <div className="mt-6 flex flex-col md:flex-row items-center gap-4 bg-lime-50/50 p-4 rounded-xl border border-lime-100/30">
                 <div className="p-2.5 bg-[#1b6b50]/5 rounded-lg border border-[#1b6b50]/10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-stone-300 rounded flex items-center justify-center font-mono text-[9px] text-gray-500 text-center">
