@@ -29,6 +29,7 @@ interface SlideRendererProps {
   onAddReflectionCard: (card: Omit<ReflectionCard, 'id'>) => void;
   onDeleteReflectionCard: (id: string) => void;
   onSetSlide: (id: number) => void;
+  textSize?: 's' | 'm' | 'l';
 }
 
 export const SlideRenderer: React.FC<SlideRendererProps> = ({
@@ -42,8 +43,61 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
   reflectionCards,
   onAddReflectionCard,
   onDeleteReflectionCard,
-  onSetSlide
+  onSetSlide,
+  textSize = 'm'
 }) => {
+  // Color alternating tool for beautiful title headers
+  const renderColorAlternatingText = (text: string, baseColorClass = "text-[#1b6b50]", accentColorClass = "text-[#e07a5f]") => {
+    if (!text) return null;
+    
+    // Check if it has an explicit bullet character or punctuation
+    if (text.includes(':')) {
+      const parts = text.split(':');
+      return (
+        <span>
+          <span className={`${accentColorClass} font-bold`}>{parts[0]}: </span>
+          <span className={`${baseColorClass} font-medium`}>{parts.slice(1).join(':')}</span>
+        </span>
+      );
+    }
+    
+    // Split into segments based on spaces, slash, or brackets to color-code
+    const words = text.split(/(\s+|\/|\(|\))/);
+    return (
+      <span>
+        {words.map((word, i) => {
+          if (!word.trim()) return word; // Keep spaces
+          
+          if (word === '/' || word === '(' || word === ')') {
+            return <span key={i} className="text-[#8c6239] font-bold mx-0.5">{word}</span>;
+          }
+
+          // Special words mapped to beautiful natural color scheme
+          const isNatureGreen = /พืชป่า|สบตา|ความรู้สึก|ใจ|ร่วมใจ|โค้ชชิ่ง|สุขภาวะ|สิริ|ปลอดภัย|ธรรมชาติ/.test(word);
+          const isTerracottaOrange = /ล้านนา|ครูเด่น|วิกฤต|สปีช|จิตวิทยา|ความเปลี่ยนแปลง|คำปฏิญาณ|พิทช์|พิทชิ่ง|เด็ด|ร้อนแรง/.test(word);
+          const isAmberGold = /ผู้เชี่ยวชาญ|ผู้นำ|ประสาน|สัจจะ|อำนาจ|คุณค่า|มาตรฐาน|สัจจะพูนสุข|เด่นสะกด/.test(word);
+
+          let finalColor = baseColorClass;
+          if (isNatureGreen) {
+            finalColor = "text-[#1b6b50] drop-shadow-[0_0.5px_0.5px_rgba(251,247,240,0.5)] font-bold";
+          } else if (isTerracottaOrange) {
+            finalColor = "text-[#e07a5f] drop-shadow-[0_0.5px_0.5px_rgba(251,247,240,0.5)] font-extrabold";
+          } else if (isAmberGold) {
+            finalColor = "text-[#8c6239] font-bold";
+          } else {
+            // Alternate colors based on word count
+            finalColor = i % 4 === 0 ? baseColorClass : i % 4 === 2 ? "text-[#8c6239]" : "text-[#5c6e58]";
+          }
+
+          return (
+            <span key={i} className={`${finalColor} transition-all duration-300 hover:scale-[1.02] inline-block`}>
+              {word}
+            </span>
+          );
+        })}
+      </span>
+    );
+  };
   // Timer State for Slide 9 (60 seconds) & Slide 23 (3 / 5 mins) & Slide 14 (10 mins)
   const [timeLeft, setTimeLeft] = useState<number>(60);
   const [timerMax, setTimerMax] = useState<number>(60);
@@ -232,8 +286,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               <span>THE PROFESSIONAL AUTHORITY PRESENTATION</span>
             </div>
 
-            {/* Premium Course Cover Image for Slide 1 or Slide 301 */}
-            {(slide.id === 1 || slide.id === 301) && (
+            {/* Premium Course Cover Image for Slide 1 */}
+            {slide.id === 1 && (
               <div className="w-full max-w-xl my-4 overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] border-2 border-stone-100 hover:shadow-2xl">
                 <img 
                   src="https://res.cloudinary.com/dmo4kq7ej/image/upload/v1780335689/ChatGPT_Image_1_%E0%B8%A1%E0%B8%B4.%E0%B8%A2._2569_14_52_56_gdsxep.png"
@@ -246,8 +300,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
 
             <div className="w-18 h-1 bg-gradient-to-r from-[#1b6b50] via-[#f2cc8f] to-[#e07a5f] rounded-full mb-4 mt-2"></div>
             
-            <h1 id="cover-main-title" className={`font-display font-bold leading-tight text-[#1b6b50] tracking-tight text-balance ${slide.id === 1 ? 'text-2xl md:text-3xl' : 'text-3xl md:text-[44px] lg:text-[48px]'}`}>
-              {slide.title}
+            <h1 id="cover-main-title" className={`font-display font-black leading-tight tracking-tight text-balance ${slide.id === 1 ? 'text-2xl md:text-3xl lg:text-4xl animate-pulse' : 'text-3xl md:text-[44px] lg:text-[48px]'}`}>
+              {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
             </h1>
             
             {slide.subtitle && (
@@ -271,7 +325,7 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               </div>
             </div>
 
-            {(slide.id === 26 || slide.id === 330) && (
+            {slide.id === 26 && (
               <div className="mt-6 flex flex-col md:flex-row items-center gap-4 bg-lime-50/50 p-4 rounded-xl border border-lime-100/30">
                 <div className="p-2.5 bg-[#1b6b50]/5 rounded-lg border border-[#1b6b50]/10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-stone-300 rounded flex items-center justify-center font-mono text-[9px] text-gray-500 text-center">
@@ -300,8 +354,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               {slide.hugeText}
             </div>
             
-            <h2 id="divider-slide-title" className="text-3xl md:text-4xl lg:text-5xl font-display font-bold leading-tight max-w-3xl text-balance">
-              {slide.title}
+            <h2 id="divider-slide-title" className="text-3xl md:text-4xl lg:text-5xl font-display font-black leading-tight max-w-3xl text-balance">
+              {renderColorAlternatingText(slide.title, "text-[#fbf7f0]", "text-[#f2cc8f]")}
             </h2>
             
             {slide.subtitle && (
@@ -323,7 +377,9 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
           <div id="slide-layout-schedule" className="h-full flex flex-col py-3 px-2 md:px-5">
             <div className="mb-4">
               <span className="text-xs font-bold text-emerald-800 tracking-wider bg-emerald-50 px-2.5 py-1 rounded">AGENDA & TRACKER</span>
-              <h2 className="text-2xl font-display font-bold mt-1 text-[#1b6b50] tracking-tight">{slide.title}</h2>
+              <h2 className="text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight">
+                {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start font-sans">
@@ -395,10 +451,12 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                 <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                   {slide.section} | หลักเกณฑ์ความก้าวหน้า
                 </span>
-                <h2 className="text-2xl font-display font-bold mt-1 text-[#1b6b50] tracking-tight text-balance">{slide.title}</h2>
+                <h2 className="text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight text-balance">
+                  {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
+                </h2>
               </div>
               {slide.subtitle && (
-                <span className="text-xs text-gray-500 font-sans italic bg-wheat/30 px-2.5 py-1 rounded max-w-sm">
+                <span className="text-xs text-stone-600 font-sans italic bg-[#1b6b50]/5 border border-[#1b6b50]/10 px-2.5 py-1 rounded max-w-sm">
                   🎯 {slide.subtitle}
                 </span>
               )}
@@ -408,6 +466,32 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               <div className="lg:col-span-8 space-y-4">
                 {slide.points?.map((pt, ind) => {
                   const isRevealed = ind < revealedPointsCount;
+                  
+                  // Dynamically alternate colors of revealed cards for a gorgeous modern mosaic
+                  const revealedBg = ind % 3 === 0
+                    ? 'bg-[#1b6b50]/5 border-[#1b6b50]/20'
+                    : ind % 3 === 1
+                    ? 'bg-[#e07a5f]/5 border-[#e07a5f]/20'
+                    : 'bg-[#8c6239]/5 border-[#8c6239]/20';
+                    
+                  const badgeColor = ind % 3 === 0
+                    ? 'bg-[#1b6b50] text-[#fbf7f0]'
+                    : ind % 3 === 1
+                    ? 'bg-[#e07a5f] text-white'
+                    : 'bg-[#8c6239] text-[#fbf7f0]';
+                  
+                  const textStyleClass = textSize === 's'
+                    ? 'text-[11px] md:text-xs'
+                    : textSize === 'l'
+                    ? 'text-sm md:text-base'
+                    : 'text-xs md:text-sm';
+                    
+                  const paddingClass = textSize === 's'
+                    ? 'p-2.5 md:p-3'
+                    : textSize === 'l'
+                    ? 'p-4 md:p-5'
+                    : 'p-3 md:p-4';
+
                   return (
                     <div 
                       key={ind}
@@ -418,20 +502,20 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                         }
                       }}
                       id={`bullet-card-${ind}`}
-                      className={`p-3 md:p-4 rounded-xl border transition-all ${
+                      className={`${paddingClass} rounded-xl border transition-all duration-300 transform ${
                         isRevealed 
-                          ? 'bg-white border-stone-200/60 shadow-xs translate-x-0 opacity-100' 
-                          : 'bg-stone-50 border-dashed border-gray-200 opacity-40 cursor-pointer hover:opacity-75'
+                          ? `${revealedBg} shadow-sm translate-x-0 opacity-100 hover:scale-[1.01]` 
+                          : 'bg-stone-50/40 border-dashed border-gray-200 opacity-40 cursor-pointer hover:opacity-75'
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${
-                          isRevealed ? 'bg-[#1b6b50] text-[#fbf7f0]' : 'bg-gray-200 text-gray-500'
+                        <span className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 ${
+                          isRevealed ? badgeColor : 'bg-gray-200 text-gray-500'
                         }`}>
                           {ind + 1}
                         </span>
                         <div>
-                          <p className={`text-xs md:text-sm font-semibold text-[#1c2722] ${!isRevealed && 'select-none filter blur-xs'}`}>
+                          <p className={`${textStyleClass} font-semibold text-[#1c2722] ${!isRevealed && 'select-none filter blur-xs opacity-50'}`}>
                             {pt}
                           </p>
                         </div>
@@ -448,9 +532,9 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                       setRevealedPointsCount(revealedPointsCount + 1);
                       playChimeSound('pop');
                     }}
-                    className="text-xs text-[#1b6b50] hover:text-[#185d46] font-bold bg-[#1b6b50]/5 px-3 py-1.5 rounded-lg flex items-center gap-1"
+                    className="text-xs text-[#1b6b50] hover:text-[#185d46] font-bold bg-[#1b6b50]/5 px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer"
                   >
-                    🔍 คลิกคลิกเพื่อคลี่คลายประเด็นถัดไป... ({revealedPointsCount}/{slide.points?.length})
+                    🔍 คลิกเพื่อเปิดหลักเกณฑ์ข้อถัดไป... ({revealedPointsCount}/{slide.points?.length})
                   </button>
                 )}
               </div>
@@ -483,7 +567,9 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                 <span className="inline-block bg-[#e07a5f] text-white text-[10px] font-sans font-bold px-2 py-0.5 rounded uppercase tracking-wider">
                   {slide.bannerText || "กิจกรรม / ฝึกปฏิบัติ"}
                 </span>
-                <h2 className="text-2xl font-display font-semibold text-[#1c2722] mt-1 tracking-tight">{slide.title}</h2>
+                <h2 className="text-2xl font-display font-black text-[#1c2722] mt-1 tracking-tight">
+                  {renderColorAlternatingText(slide.title, "text-[#1c2722]", "text-[#e07a5f]")}
+                </h2>
               </div>
               <span className="text-xs text-gray-500 bg-[#f2cc8f]/10 px-2.5 py-1 rounded border border-[#f2cc8f]/20 font-sans">
                 ⏱️ ซ้อมความเร็วและคุมกล้อง
@@ -802,15 +888,37 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
 
             {/* General points render for instructions slide */}
             {slide.points && slide.id !== 9 && slide.id !== 10 && slide.id !== 14 && slide.id !== 15 && slide.id !== 22 && slide.id !== 23 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2 font-sans">
-                {slide.points.map((pt, ind) => (
-                  <div key={ind} className="bg-white/60 hover:bg-white border rounded-xl p-3 flex gap-2.5 transition-all">
-                    <span className="w-4 h-4 bg-[#e07a5f]/15 rounded-full flex items-center justify-center text-[9px] font-bold text-[#e07a5f] mt-0.5 shrink-0">
-                      ✓
-                    </span>
-                    <p className="text-xs text-gray-700 leading-relaxed font-semibold">{pt}</p>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-2.5 font-sans">
+                {slide.points.map((pt, ind) => {
+                  const cardBg = ind % 3 === 0 
+                    ? "bg-[#1b6b50]/5 border-[#1b6b50]/15 hover:bg-[#1b6b50]/10" 
+                    : ind % 3 === 1 
+                    ? "bg-[#e07a5f]/5 border-[#e07a5f]/15 hover:bg-[#e07a5f]/10" 
+                    : "bg-[#8c6239]/5 border-[#8c6239]/15 hover:bg-[#8c6239]/10";
+                  
+                  const checkBg = ind % 3 === 0 
+                    ? "bg-[#1b6b50] text-[#fbf7f0]" 
+                    : ind % 3 === 1 
+                    ? "bg-[#e07a5f] text-white" 
+                    : "bg-[#8c6239] text-[#fbf7f0]";
+
+                  const txtSizeClass = textSize === 's' 
+                    ? "text-[11px]" 
+                    : textSize === 'l' 
+                    ? "text-sm" 
+                    : "text-xs";
+
+                  return (
+                    <div key={ind} className={`hover:scale-[1.01] border rounded-2xl p-3 flex gap-2.5 transition-all duration-200 ${cardBg}`}>
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold mt-0.5 shrink-0 ${checkBg}`}>
+                        ✓
+                      </span>
+                      <p className={`${txtSizeClass} text-gray-800 leading-relaxed font-semibold`}>
+                        {renderColorAlternatingText(pt, "text-gray-800", "text-[#e07a5f]")}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -824,8 +932,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                 <span className="text-xs font-bold text-[#8c6239] tracking-wider bg-sand/30 px-2.5 py-1 rounded">
                   🌱 กิจกรรมเช็คอินด้วยการ์ดโค้ชชิ่ง — โดยครูเด่น
                 </span>
-                <h2 className="text-xl md:text-2xl font-display font-bold mt-1 text-[#1b6b50] tracking-tight">
-                  {slide.title}
+                <h2 className="text-xl md:text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight">
+                  {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
                 </h2>
               </div>
               <span className="text-[10px] sm:text-xs text-gray-500 bg-[#f2cc8f]/10 px-2.5 py-1 rounded border border-[#f2cc8f]/20 font-sans">
@@ -954,8 +1062,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                 <span className="text-xs font-bold text-[#1b6b55] tracking-wider bg-[#1b6b55]/10 px-2.5 py-1 rounded">
                   🌱 ทฤษฎีปรับจิตวิทยาความเปลี่ยนแปลง — โดยครูเด่น
                 </span>
-                <h2 className="text-xl md:text-2xl font-display font-bold mt-1 text-[#1b6b50] tracking-tight">
-                  {slide.title}
+                <h2 className="text-xl md:text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight">
+                  {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
                 </h2>
               </div>
               <span className="text-[10px] sm:text-xs text-stone-500 bg-[#f2cc8f]/10 px-2.5 py-1 rounded border border-[#f2cc8f]/20 font-sans">
@@ -1203,8 +1311,8 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
                 <span className="text-xs font-bold text-[#8c6239] tracking-wider bg-sand/30 px-2.5 py-1 rounded">
                   🌱 กิจกรรมเตรียมร่างการนำเสนอ — โครงสร้างแซนด์วิช (3 นาที)
                 </span>
-                <h2 className="text-xl md:text-2xl font-display font-bold mt-1 text-[#1b6b50] tracking-tight">
-                  {slide.title}
+                <h2 className="text-xl md:text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight">
+                  {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
                 </h2>
               </div>
               <span className="text-[10px] sm:text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100 font-sans font-bold">
@@ -1475,7 +1583,9 @@ export const SlideRenderer: React.FC<SlideRendererProps> = ({
               <span className="inline-block bg-[#1b6b50] text-[#fbf7f0] text-[10px] font-sans font-bold px-2.5 py-1 rounded">
                 APPLICATION & WRAP-UP
               </span>
-              <h2 className="text-2xl font-display font-semibold mt-1 text-[#1b6b50] tracking-tight">{slide.title}</h2>
+              <h2 className="text-2xl font-display font-black mt-1 text-[#1b6b50] tracking-tight">
+                {renderColorAlternatingText(slide.title, "text-[#1b6b50]", "text-[#e07a5f]")}
+              </h2>
             </div>
 
             <ActionPlannerWidget 

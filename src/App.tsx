@@ -490,47 +490,47 @@ export default function App() {
             </div>
           </div>
 
-          {/* Slide Deck Container (Preserves the beautiful Slide layout) */}
+          {/* Slide Deck Container (Preserves the beautiful Slide layout, styled as a perfect 16:9 widescreen presentation display) */}
           <div 
             id="slide-projection-screen" 
-            className={`w-full max-w-4xl bg-white border border-sand/20 rounded-[32px] md:rounded-[40px] p-6 md:p-10 lg:p-12 shadow-xl slide-active-shadow transition-all relative overflow-hidden flex flex-col justify-between select-text ${
-              textSize === 's' ? 'text-sm' : textSize === 'l' ? 'text-lg' : 'text-base'
+            className={`w-full max-w-5xl md:aspect-[16/9] bg-[#fbf7f0]/10 backdrop-blur-md bg-white border-4 border-stone-850 rounded-[28px] md:rounded-[40px] p-4 md:p-8 lg:p-10 shadow-2xl slide-active-shadow ring-1 ring-black/5 transition-all relative overflow-y-auto flex flex-col justify-between select-text ${
+              textSize === 's' ? 'text-xs md:text-sm' : textSize === 'l' ? 'text-base md:text-lg' : 'text-sm md:text-base'
             }`}
             style={{ minHeight: '540px' }}
           >
             {/* Visual background accents to emulate premium slide paper */}
-            <div className={`absolute top-0 left-0 right-0 h-2 ${
-              activeSlide.layout === 'activity' ? 'bg-secondary-terracotta' : activeSlide.layout === 'divider' ? 'bg-sand' : 'bg-primary-green'
+            <div className={`absolute top-0 left-0 right-0 h-2.5 ${
+              activeSlide.layout === 'activity' ? 'bg-[#e07a5f]' : activeSlide.layout === 'divider' ? 'bg-[#f2cc8f]' : 'bg-[#1b6b50]'
             }`} />
 
             {/* Slide Header details */}
             {activeSlide.layout !== 'divider' && (
-              <div className="flex items-center justify-between pb-3 text-xs text-[#8c6239] border-b border-sand/10 mb-4 shrink-0 font-sans">
+              <div className="flex items-center justify-between pb-2 text-xs text-[#8c6239] border-b border-[#1b6b50]/10 mb-2.5 shrink-0 font-sans">
                 <div className="flex items-center gap-3">
                   <img 
                     src="https://res.cloudinary.com/dmo4kq7ej/image/upload/v1780335603/ChatGPT_Image_1_%E0%B8%A1%E0%B8%B4.%E0%B8%A2._2569_15_12_58_cvzm9y.png"
                     alt="สถาบันแคปวิชั่น"
-                    className="h-8 md:h-10 w-auto object-contain shrink-0"
+                    className="h-7 md:h-9 w-auto object-contain shrink-0"
                     referrerPolicy="no-referrer"
                   />
                   <span className="opacity-30 self-stretch border-r border-[#8c6239]/20" />
                   <div className="flex flex-col">
-                    <span className="font-extrabold uppercase bg-sand/10 text-primary-green px-1.5 py-0.5 rounded tracking-widest text-[8.5px] border border-sand/15 w-max leading-none">
+                    <span className="font-extrabold uppercase bg-[#1b6b50]/10 text-[#1b6b50] px-1.5 py-0.5 rounded tracking-widest text-[8.5px] border border-[#1b6b50]/15 w-max leading-none">
                       SLIDE {currentSlideIdx + 1} / {SLIDES_DATA.length}
                     </span>
-                    <span className="text-[10px] font-semibold text-primary-green mt-0.5">{activeSlide.section}</span>
+                    <span className="text-[10px] font-semibold text-[#1b6b50] mt-0.5">{activeSlide.section}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2.5 font-semibold text-stone-500">
-                  <span className="font-medium text-primary-green font-sans text-right hidden sm:block">ครูเด่นมาสเตอร์ฟา</span>
+                  <span className="font-bold text-[#1b6b50] font-sans text-right hidden sm:block">ครูเด่นมาสเตอร์ฟา 🌿</span>
                   <span className="opacity-40 hidden sm:inline">•</span>
-                  <span>capvisionpartner.com</span>
+                  <span className="text-[10.5px]">capvisionpartner.com</span>
                 </div>
               </div>
             )}
 
             {/* Renderer for Slide Structure */}
-            <div className="flex-1">
+            <div className="flex-1 flex flex-col justify-center">
               <SlideRenderer 
                 slide={activeSlide} 
                 selfIntroState={selfIntro}
@@ -543,15 +543,16 @@ export default function App() {
                 onAddReflectionCard={handleAddReflectionCard}
                 onDeleteReflectionCard={handleDeleteReflectionCard}
                 onSetSlide={selectSlide}
+                textSize={textSize}
               />
             </div>
 
             {/* Slide Footer Details */}
             {activeSlide.layout !== 'divider' && (
-              <div className="mt-8 pt-3 border-t border-sand/10 flex items-center justify-between text-[11px] text-[#8c6239]/70 shrink-0 font-sans">
-                <p className="font-medium">💡 ซ้อมพูดสด & ใช้ Keyboard ควบคุมสไลด์ผ่านระบบ Zoom</p>
+              <div className="mt-4 pt-2 border-t border-[#1b6b50]/10 flex items-center justify-between text-[11px] text-[#8c6239]/70 shrink-0 font-sans">
+                <p className="font-bold flex items-center gap-1">💡 <span>สไลด์มุมมอง 16:9 • ซ้อมพูดสดผ่านซูมครูเด่น</span></p>
                 <div className="text-right font-semibold">
-                  <strong>พัฒนาทักษะการเรียนรู้ร่วมใจ</strong> / 6 ชม.
+                  <strong>ครูเด่นมาสเตอร์ฟา</strong> / เสริมสุขภาวะล้านนา
                 </div>
               </div>
             )}
